@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-deploy
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      pod: busybox
+  template:
+    metadata:
+      labels:
+        pod: busybox
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}"
+          command: ["sh", "-c", "while true; do echo ${custom_message}; sleep 5; done"]
+          env:
+            - name: custom_message
+              valueFrom:
+                configMapKeyRef:
+                  name: config
+                  key: message
